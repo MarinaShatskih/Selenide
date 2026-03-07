@@ -1,7 +1,8 @@
 package ru.netology.selenide;
 
 import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.Configuration;
+import com.codeborne.selenide.Selenide;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Keys;
 
@@ -13,35 +14,30 @@ import static com.codeborne.selenide.Selenide.*;
 
 public class AppCardDeliveryTaskOneTest {
 
+    @BeforeEach
+    void setUp() {
+        Selenide.open("http://localhost:9999/");
+    }
+
     public String generateDate(int days) {
         return LocalDate.now().plusDays(days).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
     }
 
     @Test
     void shouldTestSuccessfulFormSubmission() {
-
-        Configuration.headless = true;
-
-        open("http://localhost:9999");
         String planningDate = generateDate(4);
 
-
         $("[data-test-id='city'] input").setValue("Москва");
-
 
         $("[data-test-id='date'] input").sendKeys(Keys.chord(Keys.CONTROL, "a"), Keys.DELETE);
         $("[data-test-id='date'] input").setValue(planningDate);
 
-
         $("[data-test-id='name'] input").setValue("Иван Иванов-Петров");
         $("[data-test-id='phone'] input").setValue("+79271234567");
 
-
         $("[data-test-id='agreement']").click();
 
-
         $$("button").find(Condition.text("Забронировать")).click();
-
 
         $("[data-test-id='notification']")
                 .shouldBe(Condition.visible, Duration.ofSeconds(15))
